@@ -59,9 +59,11 @@ npm run preview    # serve the built dist/ locally
   infinite-scroll batching, the lightbox (EXIF panel, ←/→/Esc, `#/photo/<id>` deep links), and a
   tag filter that stays hidden until photos carry keywords. Everything degrades with JS disabled.
 - **Fonts**: Helvetica system stack for UI; Source Serif 4 700 self-hosted in `public/fonts/`.
-- **Deploy**: `.github/workflows/deploy.yml` builds and pushes `dist/` to Cloudflare **Pages**
-  (project must be a Pages project, not Workers). Secrets: `CLOUDFLARE_API_TOKEN`,
-  `CLOUDFLARE_ACCOUNT_ID`.
+- **Deploy**: Cloudflare's Git integration builds on every push using `wrangler.jsonc`, which
+  serves `dist/` as pure static assets (build command `npm run build`, deploy command
+  `npx wrangler deploy`; no `@astrojs/cloudflare` adapter — it forces server output in Astro 6).
+  `npm run deploy` does the same from a local machine, and `.github/workflows/deploy.yml` is a
+  manual-dispatch fallback (secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
 
 ## License
 

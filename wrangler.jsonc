@@ -1,0 +1,16 @@
+// Static-assets-only Workers deploy: `dist/` is served directly from
+// Cloudflare's edge. There is deliberately NO Worker script and NO
+// @astrojs/cloudflare adapter — the site is fully prerendered static HTML
+// (the Astro 6 adapter forces server output and would break this).
+//
+// Cloudflare Git build settings for this repo:
+//   Build command:  npm run build
+//   Deploy command: npx wrangler deploy
+{
+  "name": "photo-portfolio",
+  "compatibility_date": "2026-07-07",
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash"
+  }
+}
