@@ -62,3 +62,9 @@ npm run preview    # serve the built dist/ locally
 - **Deploy**: `.github/workflows/deploy.yml` builds and pushes `dist/` to Cloudflare **Pages**
   (project must be a Pages project, not Workers). Secrets: `CLOUDFLARE_API_TOKEN`,
   `CLOUDFLARE_ACCOUNT_ID`.
+
+## License
+
+- **Code** (site, pipeline, scripts): [MIT](LICENSE).
+- **Photographs** (all images, `data/` metadata, everything on photocdn.dag.gy): **all rights
+  reserved** — see [LICENSE-PHOTOS](LICENSE-PHOTOS). The MIT grant never extends to the photos.

@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_NAME, COPYRIGHT_YEAR } from '../lib/site.mjs';
+---
+
+<Base
+  title={`License — ${SITE_NAME}`}
+  description="Licensing: photographs are all rights reserved; the site's source code is MIT."
+  active=""
+  captionLeft="LICENSE"
+  captionRight="PHOTOGRAPHS · CODE"
+>
+  <section class="license-section container">
+    <div class="license-block">
+      <h2>PHOTOGRAPHS — ALL RIGHTS RESERVED</h2>
+      <p>
+        Every photograph on this site is © {COPYRIGHT_YEAR} {SITE_NAME}. No photograph may be
+        reproduced, distributed, publicly displayed, used to train machine-learning models, or
+        used for any commercial or non-commercial purpose without prior written permission.
+        For licensing inquiries, get in touch.
+      </p>
+    </div>
+    <div class="license-block">
+      <h2>SITE &amp; CODE — MIT</h2>
+      <p>
+        The source code that builds this site is open source under the MIT license — use it,
+        fork it, build your own portfolio with it. The MIT grant covers the code only, never
+        the photographs.
+      </p>
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<style>
+  .license-section {
+    padding-top: 56px;
+  }
+  .license-block {
+    max-width: 720px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .license-block:first-child {
+    border-top: 1px solid var(--ink);
+  }
+  .license-block h2 {
+    font: 700 12px var(--sans);
+    letter-spacing: 0.26em;
+    margin: 0 0 12px;
+  }
+  .license-block p {
+    font: 400 13px/1.8 var(--sans);
+    color: var(--sub);
+    margin: 0;
+    max-width: 58ch;
+  }
+</style>
