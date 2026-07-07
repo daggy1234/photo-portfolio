@@ -1,0 +1,45 @@
+---
+import { SITE_NAME, INSTAGRAM_URL } from '../lib/site.mjs';
+
+const { active, captionLeft, captionRight } = Astro.props;
+const links = [
+  { label: 'HOME', href: '/', key: 'home' },
+  { label: 'ALBUMS', href: '/albums/', key: 'albums' },
+  { label: 'ABOUT', href: '#', key: 'about' },
+  { label: 'INSTAGRAM', href: INSTAGRAM_URL, key: 'instagram' },
+];
+---
+
+<header class="container">
+  <div class="nav-row">
+    <a href="/" class="logotype">{SITE_NAME}</a>
+    <nav class="nav-links">
+      {
+        links.map((l) => (
+          <a href={l.href} aria-current={l.key === active ? 'page' : undefined}>
+            {l.label}
+          </a>
+        ))
+      }
+      <button class="theme-toggle" title="light / dark" aria-label="Toggle theme"></button>
+    </nav>
+  </div>
+  {
+    (captionLeft || captionRight) && (
+      <div class="caption-strip">
+        <span>{captionLeft}</span>
+        <span>{captionRight}</span>
+      </div>
+    )
+  }
+</header>
+
+<script>
+  document.querySelector('.theme-toggle')?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem('pf-theme', next);
+    } catch {}
+  });
+</script>

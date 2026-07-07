@@ -1,0 +1,29 @@
+---
+import PhotoCard from './PhotoCard.astro';
+import Lightbox from './Lightbox.astro';
+
+// shuffle: reorder client-side on every visit (home page)
+const { photos, shuffle = false } = Astro.props;
+---
+
+<section class="masonry-section container">
+  <div class="filter-bar" data-filter-bar></div>
+  <div class="masonry-wrap">
+    <div class="masonry" data-grid data-shuffle={shuffle ? '' : undefined}>
+      {photos.map((photo, index) => <PhotoCard {photo} {index} />)}
+    </div>
+  </div>
+  <div class="sentinel" data-sentinel>
+    <span class="rule"></span>
+    <span class="label">LOADING MORE</span>
+    <span class="rule"></span>
+  </div>
+</section>
+
+<Lightbox />
+
+<script>
+  import '../scripts/shuffle.js';
+  import '../scripts/filter.js';
+  import '../scripts/lightbox.js';
+</script>

@@ -1,0 +1,35 @@
+---
+// Single overlay per page; lightbox.js fills it from the .ph-card data
+// attributes. Hidden by default, so no-JS visitors never see it.
+---
+
+<div class="lightbox" data-lightbox-root hidden role="dialog" aria-modal="true" aria-label="Photo detail">
+  <div class="lb-card">
+    <div class="lb-photo">
+      <img alt="" data-lb-img />
+    </div>
+    <div class="lb-panel">
+      <div class="lb-head">
+        <div class="lb-title" data-lb-title></div>
+        <button class="lb-close" data-lb-close aria-label="Close">✕</button>
+      </div>
+      <div class="lb-loc" data-lb-loc></div>
+      <div class="lb-rule"></div>
+      <dl class="lb-rows" data-lb-rows>
+        <div data-row="camera"><dt>CAMERA</dt><dd></dd></div>
+        <div data-row="lens"><dt>LENS</dt><dd></dd></div>
+        <div data-row="exposure"><dt>EXPOSURE</dt><dd></dd></div>
+        <div data-row="date"><dt>DATE</dt><dd></dd></div>
+        <div data-lb-album-row><dt>ALBUM</dt><dd><a data-lb-album></a></dd></div>
+        <div data-lb-tags-row class="lb-tags"><dt>TAGS</dt><dd data-lb-tags></dd></div>
+      </dl>
+      <div class="lb-spacer"></div>
+      <div class="lb-rule lb-rule-margin"></div>
+      <div class="lb-foot">
+        <button data-lb-prev>← PREV</button>
+        <span data-lb-pos></span>
+        <button data-lb-next>NEXT →</button>
+      </div>
+    </div>
+  </div>
+</div>

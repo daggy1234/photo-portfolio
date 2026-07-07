@@ -1,0 +1,56 @@
+---
+import {
+  imageUrl,
+  srcset,
+  GRID_WIDTHS,
+  GRID_SIZES,
+  GRID_SIZES_WIDE,
+  FULL_WIDTH,
+} from '../lib/cdn.mjs';
+import { rowSpan, rowSpanWide, isWide } from '../lib/masonry.mjs';
+
+const { photo, index = 99 } = Astro.props;
+const p = photo;
+
+const wide = isWide(p.ratio);
+// Above-the-fold images load eagerly; the first two get high priority.
+const eager = index < 4;
+const fullUrl = imageUrl(p.key, FULL_WIDTH);
+---
+
+<figure
+  class:list={['ph-card', { wide }]}
+  style={`--span:${rowSpan(p.ratio)};--span2:${rowSpanWide(p.ratio)};--ar:${p.width}/${p.height}`}
+  data-id={p.id}
+  data-title={p.title}
+  data-album={p.album}
+  data-album-slug={p.albumSlug}
+  data-camera={p.camera}
+  data-lens={p.lens}
+  data-exposure={p.exposure}
+  data-date={p.dateDisplay}
+  data-full={fullUrl}
+  data-full-srcset={`${imageUrl(p.key, 1200)} 1200w, ${fullUrl} 2000w`}
+  data-tags={p.keywords.join(',')}
+>
+  <div class="ph-frame">
+    <!-- Without JS this opens the full-size photo; lightbox.js hijacks it -->
+    <a href={fullUrl} data-lightbox aria-label={`Open ${p.title}`}>
+      <img
+        src={imageUrl(p.key, 800)}
+        srcset={srcset(p.key, GRID_WIDTHS)}
+        sizes={wide ? GRID_SIZES_WIDE : GRID_SIZES}
+        width={p.width}
+        height={p.height}
+        alt={`${p.title} — ${p.album}`}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={index < 2 ? 'high' : undefined}
+      />
+    </a>
+  </div>
+  <figcaption>
+    <span>{p.album}</span>
+    <span>{p.exposure}</span>
+  </figcaption>
+</figure>

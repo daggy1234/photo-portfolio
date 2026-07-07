@@ -1,0 +1,71 @@
+---
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+import { albums } from '../../lib/data.mjs';
+import { imageUrl, srcset, COVER_WIDTHS, COVER_SIZES, COVER_WIDE_SIZES } from '../../lib/cdn.mjs';
+import { SITE_NAME } from '../../lib/site.mjs';
+
+const list = albums();
+const totalPhotos = list.reduce((n, a) => n + a.count, 0);
+const pad = (n) => String(n).padStart(2, '0');
+const meta = (a) => `${a.year ?? ''}${a.year ? ' — ' : ''}${a.count} PHOTOS`;
+// Contact-sheet rhythm from the mock: standard 15/10 tiles in pairs; when the
+// count is odd the last tile goes full-width at 32/10.
+const isWide = (i) => i === list.length - 1 && list.length % 2 === 1;
+---
+
+<Base
+  title={`Albums — ${SITE_NAME}`}
+  description={`Photography albums by location: ${list.map((a) => a.name).join(', ')}.`}
+  active="albums"
+  captionLeft="ALBUMS — BY LOCATION"
+  captionRight={`${pad(list.length)} COLLECTIONS · ${totalPhotos} PHOTOS`}
+>
+  <section class="tiles-section container">
+    <div class="tiles">
+      {
+        list.map((a, i) => (
+          <a href={`/albums/${a.slug}/`} class:list={['tile', { wide: isWide(i) }]}>
+            <img
+              src={imageUrl(a.cover.key, 1200)}
+              srcset={srcset(a.cover.key, COVER_WIDTHS)}
+              sizes={isWide(i) ? COVER_WIDE_SIZES : COVER_SIZES}
+              alt={`${a.name} album cover`}
+              loading={i < 2 ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+            <div class="tile-overlay">
+              <div class="tile-name">{a.name}</div>
+              <div class="tile-rule" />
+              <div class="tile-meta">{meta(a)}</div>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="locations-section container">
+    <div class="locations-head">
+      <h2>ALL LOCATIONS</h2>
+      <span class="rule"></span>
+      <span class="az">A — Z</span>
+    </div>
+    {
+      list.map((a, i) => (
+        <a href={`/albums/${a.slug}/`} class="location-row">
+          <span class="row-main">
+            <span class="row-name">
+              <span class="num">{pad(i + 1)}</span>
+              <span class="name">{a.name}</span>
+            </span>
+            <span class="meta">{meta(a)} →</span>
+          </span>
+          {a.places.length > 0 && <span class="places">{a.places.join(' · ')}</span>}
+        </a>
+      ))
+    }
+  </section>
+
+  <Footer />
+</Base>

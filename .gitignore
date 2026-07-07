@@ -1,0 +1,14 @@
+photos/
+extract-utility/__pycache__
+extract-utility/images
+design/
+*.env
+.DS_STORE
+*.DS_STORE
+node_modules/
+out/
+.env
+.claude/
+# astro
+dist/
+.astro/

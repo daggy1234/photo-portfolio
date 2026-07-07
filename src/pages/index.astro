@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import PhotoGrid from '../components/PhotoGrid.astro';
+import { fiveStar } from '../lib/data.mjs';
+import { srcset, GRID_SIZES } from '../lib/cdn.mjs';
+import { SITE_NAME } from '../lib/site.mjs';
+
+const photos = fiveStar();
+const lcp = photos[0];
+---
+
+<Base
+  title={`${SITE_NAME} — Photography`}
+  description="Black & white photography — selected work, shuffled on every visit."
+  active="home"
+  captionLeft="SELECTED — SHUFFLED ON EVERY VISIT"
+  captionRight="BLACK & WHITE · 35MM + DIGITAL"
+  preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+>
+  <PhotoGrid {photos} shuffle />
+</Base>

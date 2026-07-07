@@ -1,0 +1,27 @@
+---
+import Base from '../../layouts/Base.astro';
+import PhotoGrid from '../../components/PhotoGrid.astro';
+import Footer from '../../components/Footer.astro';
+import { albums } from '../../lib/data.mjs';
+import { srcset, GRID_SIZES } from '../../lib/cdn.mjs';
+import { SITE_NAME } from '../../lib/site.mjs';
+
+export function getStaticPaths() {
+  return albums().map((a) => ({ params: { album: a.slug }, props: { album: a } }));
+}
+
+const { album } = Astro.props;
+const lcp = album.photos[0];
+---
+
+<Base
+  title={`${album.name} — ${SITE_NAME}`}
+  description={`${album.name} — ${album.count} black & white photographs.`}
+  active="albums"
+  captionLeft={`${album.name.toUpperCase()} — ALBUM`}
+  captionRight={`${album.count} PHOTOS · NEWEST FIRST`}
+  preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+>
+  <PhotoGrid photos={album.photos} />
+  <Footer />
+</Base>

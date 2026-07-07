@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import PhotoGrid from '../../components/PhotoGrid.astro';
+import Footer from '../../components/Footer.astro';
+import { allPhotos, slugify } from '../../lib/data.mjs';
+import { srcset, GRID_SIZES } from '../../lib/cdn.mjs';
+import { SITE_NAME } from '../../lib/site.mjs';
+
+// One static page per keyword: every photo carrying that tag, across all
+// albums and ratings, newest first.
+export function getStaticPaths() {
+  const bySlug = new Map();
+  for (const p of allPhotos()) {
+    for (const tag of p.keywords) {
+      const slug = slugify(tag);
+      if (!bySlug.has(slug)) bySlug.set(slug, { tag, photos: [] });
+      bySlug.get(slug).photos.push(p);
+    }
+  }
+  return [...bySlug.entries()].map(([slug, { tag, photos }]) => ({
+    params: { tag: slug },
+    props: {
+      tag,
+      photos: photos.sort((a, b) => (b.dateTaken || '').localeCompare(a.dateTaken || '')),
+    },
+  }));
+}
+
+const { tag, photos } = Astro.props;
+const albumCount = new Set(photos.map((p) => p.album)).size;
+const lcp = photos[0];
+---
+
+<Base
+  title={`${tag.toUpperCase()} — ${SITE_NAME}`}
+  description={`${photos.length} photographs tagged "${tag}".`}
+  active=""
+  captionLeft={`${tag.toUpperCase()} — TAG`}
+  captionRight={`${photos.length} PHOTOS · ${albumCount} ${albumCount === 1 ? 'ALBUM' : 'ALBUMS'}`}
+  preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+>
+  <PhotoGrid {photos} />
+  <Footer />
+</Base>
