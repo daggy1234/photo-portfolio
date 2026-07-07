@@ -25,6 +25,15 @@ function asArray(value) {
   return [String(value)];
 }
 
+/** XMP text values can arrive as "x", {value:"x"}, or [{value:"x"}]. */
+function xmpText(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return xmpText(value[0]);
+  if (typeof value === "object") return xmpText(value.value);
+  const s = String(value).trim();
+  return s || null;
+}
+
 function toIso(value) {
   if (value instanceof Date && !Number.isNaN(value.getTime())) {
     return value.toISOString();
@@ -91,6 +100,12 @@ export async function extractFromBuffer(buffer) {
 
   return {
     rating,
+    // Lightroom's Title/Caption fields (XMP dc:title/dc:description, with
+    // IPTC fallbacks) — surfaced on the site when present.
+    title: xmpText(meta.title ?? meta.ObjectName ?? meta.Headline),
+    caption: xmpText(
+      meta.description ?? meta.ImageDescription ?? meta["Caption-Abstract"]
+    ),
     keywords: asArray(meta.subject ?? meta.Keywords),
     hierarchicalKeywords: asArray(meta.hierarchicalSubject),
     width,

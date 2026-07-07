@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
+import { SITE_NAME } from '../lib/site.mjs';
 
 const {
   title,
@@ -9,7 +10,11 @@ const {
   captionLeft = '',
   captionRight = '',
   preload = null, // { srcset, sizes } for the likely LCP image
+  ogImage = null, // { url, width, height, alt } for link unfurls
+  ogType = 'website',
 } = Astro.props;
+
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : null;
 ---
 
 <!doctype html>
@@ -20,6 +25,34 @@ const {
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <meta name="generator" content={Astro.generator} />
+    <meta name="author" content="Arnav Jindal" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    <!-- Link unfurls: OpenGraph (iMessage/WhatsApp/Slack/Discord/FB) + Twitter -->
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content={ogType} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {
+      ogImage && (
+        <>
+          <meta property="og:image" content={ogImage.url} />
+          {ogImage.width && <meta property="og:image:width" content={String(ogImage.width)} />}
+          {ogImage.height && <meta property="og:image:height" content={String(ogImage.height)} />}
+          {ogImage.alt && <meta property="og:image:alt" content={ogImage.alt} />}
+        </>
+      )
+    }
+    <meta name="twitter:card" content={ogImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    {ogImage && <meta name="twitter:image" content={ogImage.url} />}
+    {ogImage?.alt && <meta name="twitter:image:alt" content={ogImage.alt} />}
+
+    <link rel="preconnect" href="https://photocdn.dag.gy" />
     <link
       rel="preload"
       href="/fonts/source-serif-4-latin-700-normal.woff2"
@@ -38,6 +71,7 @@ const {
         />
       )
     }
+    <slot name="head" />
     <script is:inline>
       // Pre-paint theme: a stored toggle choice wins, otherwise the site
       // default is dark. Keep inline and first so there is no flash.

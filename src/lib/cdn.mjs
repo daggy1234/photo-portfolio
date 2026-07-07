@@ -27,6 +27,12 @@ export function srcset(key, widths = GRID_WIDTHS) {
   return widths.map((w) => `${imageUrl(key, w)} ${w}w`).join(', ');
 }
 
+// Social-embed image (og:image / twitter:image). Explicit JPEG — format=auto
+// can hand unfurl crawlers WebP/AVIF, which some link previewers reject.
+export function ogImageUrl(key) {
+  return `${CDN_ORIGIN}/cdn-cgi/image/width=1200,format=jpeg,quality=85/${encodeKey(key)}`;
+}
+
 // Column breakpoints must match the --cols media queries in global.css.
 export const GRID_SIZES = [
   '(min-width: 1544px) 291px',

@@ -1,0 +1,231 @@
+---
+import Base from '../../layouts/Base.astro';
+import Footer from '../../components/Footer.astro';
+import { allPhotos, slugify } from '../../lib/data.mjs';
+import { imageUrl, srcset, ogImageUrl, FULL_WIDTH } from '../../lib/cdn.mjs';
+import { SITE_NAME, COPYRIGHT_YEAR, INSTAGRAM_URL } from '../../lib/site.mjs';
+
+// One real, crawlable page per photo — this is what makes shared links
+// unfurl with the actual image (hash fragments never reach crawlers).
+export function getStaticPaths() {
+  return allPhotos().map((p) => ({ params: { id: p.id }, props: { photo: p } }));
+}
+
+const { photo: p } = Astro.props;
+
+const details = [p.camera, p.lens, p.exposure].filter(Boolean).join(', ');
+const description = [
+  p.caption,
+  `Photograph from ${p.album}${p.dateDisplay ? ` — ${p.dateDisplay}` : ''}.`,
+  details ? `${details}.` : '',
+]
+  .filter(Boolean)
+  .join(' ');
+
+const exif = [
+  ['CAMERA', p.camera],
+  ['LENS', p.lens],
+  ['EXPOSURE', p.exposure],
+  ['DATE', p.dateDisplay],
+].filter(([, v]) => v);
+
+const licenseUrl = Astro.site ? new URL('/license/', Astro.site).href : '/license/';
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Photograph',
+  name: `${p.title} — ${p.album}`,
+  description,
+  contentUrl: imageUrl(p.key, FULL_WIDTH),
+  thumbnailUrl: imageUrl(p.key, 400),
+  width: p.width,
+  height: p.height,
+  ...(p.dateTaken && { dateCreated: p.dateTaken }),
+  ...(p.keywords.length && { keywords: p.keywords.join(', ') }),
+  contentLocation: p.album,
+  creator: { '@type': 'Person', name: 'Arnav Jindal', sameAs: INSTAGRAM_URL },
+  copyrightNotice: `© ${COPYRIGHT_YEAR} Arnav Jindal`,
+  license: licenseUrl,
+  acquireLicensePage: licenseUrl,
+  creditText: SITE_NAME,
+};
+---
+
+<Base
+  title={`${p.title} — ${p.album} — ${SITE_NAME}`}
+  {description}
+  active=""
+  captionLeft={`${p.album.toUpperCase()} — PHOTOGRAPH`}
+  captionRight={p.dateDisplay?.toUpperCase() || ''}
+  ogType="article"
+  ogImage={{
+    url: ogImageUrl(p.key),
+    width: 1200,
+    height: Math.round((1200 * p.height) / p.width),
+    alt: `${p.title} — ${p.album}`,
+  }}
+>
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />
+
+  <section class="photo-page container">
+    <div class="pp-photo">
+      <img
+        src={imageUrl(p.key, 1200)}
+        srcset={`${imageUrl(p.key, 800)} 800w, ${imageUrl(p.key, 1200)} 1200w, ${imageUrl(p.key, FULL_WIDTH)} 2000w`}
+        sizes="(max-width: 720px) 100vw, calc(100vw - 430px)"
+        width={p.width}
+        height={p.height}
+        alt={`${p.title} — ${p.album}`}
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
+    <div class="pp-panel">
+      <div class="pp-title">{p.title}</div>
+      <div class="pp-loc">{p.album}</div>
+      <div class="pp-rule"></div>
+      <dl class="pp-rows">
+        {
+          exif.map(([k, v]) => (
+            <div>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))
+        }
+        <div>
+          <dt>ALBUM</dt>
+          <dd><a href={`/albums/${p.albumSlug}/`}>{p.album} →</a></dd>
+        </div>
+        {
+          p.keywords.length > 0 && (
+            <div class="pp-tags">
+              <dt>TAGS</dt>
+              <dd>
+                {p.keywords.map((t) => (
+                  <a href={`/tags/${slugify(t)}/`}>{t}</a>
+                ))}
+              </dd>
+            </div>
+          )
+        }
+      </dl>
+      <div class="pp-rule"></div>
+      <a class="pp-back" href={`/albums/${p.albumSlug}/`}>← VIEW THE FULL ALBUM</a>
+    </div>
+  </section>
+
+  <Footer />
+</Base>
+
+<style>
+  .photo-page {
+    display: flex;
+    gap: 0;
+    padding-top: 28px;
+    align-items: stretch;
+  }
+  .pp-photo {
+    flex: 1;
+    min-width: 0;
+    background: #050505;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+  }
+  .pp-photo img {
+    max-width: 100%;
+    max-height: 78vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+  .pp-panel {
+    width: 290px;
+    flex: none;
+    border: 1px solid var(--line);
+    border-left: none;
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  .pp-title {
+    font: 700 20px var(--serif);
+    line-height: 1.2;
+  }
+  .pp-loc {
+    font: 400 9.5px var(--sans);
+    letter-spacing: 0.2em;
+    color: var(--sub);
+    margin-top: 6px;
+    text-transform: uppercase;
+  }
+  .pp-rule {
+    height: 1px;
+    background: var(--line);
+    margin: 18px 0;
+  }
+  .pp-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font: 400 10.5px var(--sans);
+    margin: 0;
+  }
+  .pp-rows > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .pp-rows dt {
+    letter-spacing: 0.18em;
+    color: var(--sub);
+  }
+  .pp-rows dd {
+    margin: 0;
+    text-align: right;
+  }
+  .pp-rows dd a {
+    color: var(--ink);
+    border-bottom: 1px solid var(--sub);
+    padding-bottom: 1px;
+  }
+  .pp-rows dd a:hover {
+    color: var(--sub);
+    border-bottom-color: var(--ink);
+  }
+  .pp-tags dd {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 9.5px;
+  }
+  .pp-back {
+    margin-top: auto;
+    font: 400 9.5px var(--sans);
+    letter-spacing: 0.18em;
+    color: var(--sub);
+  }
+  .pp-back:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 720px) {
+    .photo-page {
+      flex-direction: column;
+    }
+    .pp-photo {
+      padding: 16px;
+    }
+    .pp-panel {
+      width: auto;
+      border: 1px solid var(--line);
+      border-top: none;
+    }
+    .pp-back {
+      margin-top: 18px;
+    }
+  }
+</style>

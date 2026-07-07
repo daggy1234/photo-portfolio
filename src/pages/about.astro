@@ -6,15 +6,31 @@ import { SITE_NAME, INSTAGRAM_URL } from '../lib/site.mjs';
 import { visitedCountries } from '../lib/worldmap.mjs';
 
 const countryCount = visitedCountries().length;
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Arnav Jindal',
+  url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
+  image: Astro.site ? new URL('/assets/about_photo.jpg', Astro.site).href : '/assets/about_photo.jpg',
+  sameAs: [INSTAGRAM_URL],
+  description:
+    'Amateur photographer — street and landscape work on a Fujifilm X-T5 and 35mm film.',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Duke University' },
+  knowsAbout: ['street photography', 'landscape photography', '35mm film photography', 'darkroom processing'],
+};
 ---
 
 <Base
   title={`About — ${SITE_NAME}`}
-  description="Arnav Jindal — amateur photographer. Street and landscape work on a Fujifilm X-T5 and 35mm black & white film, self-processed in a darkroom."
+  description={`Arnav Jindal — amateur photographer and Duke alum. Street and landscape photography across ${countryCount} countries on a Fujifilm X-T5 and 35mm film.`}
   active="about"
   captionLeft="ABOUT — THE PHOTOGRAPHER"
   captionRight={`STREET · LANDSCAPE · ${countryCount} COUNTRIES`}
+  ogType="profile"
+  ogImage={{ url: Astro.site ? new URL('/assets/about_photo.jpg', Astro.site).href : '/assets/about_photo.jpg', width: 1365, height: 2048, alt: 'Arnav Jindal' }}
 >
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />
   <section class="about-section container">
     <div class="about-grid">
       <div class="about-photo">
@@ -34,9 +50,10 @@ const countryCount = visitedCountries().length;
           with 35mm film — especially black &amp; white, which I process myself in a darkroom.
         </p>
         <p>
-          Most of my work is street photography, made wherever travel takes me. I also hike, and
-          I love photographing the stunning landscapes of the world. I travel light: a wide
-          angle, a 23mm for the street, and a flat 27mm pancake.
+          Most of my work is street photography, made wherever travel takes me. I'm a Duke alum
+          and studied abroad in Madrid, Spain. I also hike, and I love photographing the
+          stunning landscapes of the world. I travel light: a wide angle, a 23mm for the
+          street, and a flat 27mm pancake.
         </p>
         <p>
           Follow along on my photography Instagram, where I hope to post more than just stills.

@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.astro';
 import Footer from '../../components/Footer.astro';
 import { allPhotos, slugify } from '../../lib/data.mjs';
-import { srcset, GRID_SIZES } from '../../lib/cdn.mjs';
+import { srcset, ogImageUrl, GRID_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
 
 // One static page per keyword: every photo carrying that tag, across all
@@ -38,6 +38,14 @@ const lcp = photos[0];
   captionLeft={`${tag.toUpperCase()} — TAG`}
   captionRight={`${photos.length} PHOTOS · ${albumCount} ${albumCount === 1 ? 'ALBUM' : 'ALBUMS'}`}
   preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+  ogImage={lcp
+    ? {
+        url: ogImageUrl(lcp.key),
+        width: 1200,
+        height: Math.round((1200 * lcp.height) / lcp.width),
+        alt: `${lcp.title} — ${lcp.album}`,
+      }
+    : null}
 >
   <PhotoGrid {photos} />
   <Footer />

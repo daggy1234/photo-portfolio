@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The site's mark: the half-filled theme-toggle circle -->
+  <style>
+    .ring { stroke: #0a0a0a; }
+    .half { fill: #0a0a0a; }
+    @media (prefers-color-scheme: dark) {
+      .ring { stroke: #ffffff; }
+      .half { fill: #ffffff; }
+    }
+  </style>
+  <circle cx="16" cy="16" r="13.5" fill="none" class="ring" stroke-width="2.5"/>
+  <path d="M16 2.5 A13.5 13.5 0 0 0 16 29.5 Z" class="half"/>
+</svg>

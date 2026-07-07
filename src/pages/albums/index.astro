@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import { albums } from '../../lib/data.mjs';
-import { imageUrl, srcset, COVER_WIDTHS, COVER_SIZES, COVER_WIDE_SIZES } from '../../lib/cdn.mjs';
+import { imageUrl, srcset, ogImageUrl, COVER_WIDTHS, COVER_SIZES, COVER_WIDE_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
 
 const list = albums();
@@ -20,6 +20,14 @@ const isWide = (i) => i === list.length - 1 && list.length % 2 === 1;
   active="albums"
   captionLeft="ALBUMS — BY LOCATION"
   captionRight={`${pad(list.length)} COLLECTIONS · ${totalPhotos} PHOTOS`}
+  ogImage={list[0]
+    ? {
+        url: ogImageUrl(list[0].cover.key),
+        width: 1200,
+        height: Math.round((1200 * list[0].cover.height) / list[0].cover.width),
+        alt: `${list[0].name} album cover`,
+      }
+    : null}
 >
   <section class="tiles-section container">
     <div class="tiles">

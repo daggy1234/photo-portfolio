@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PhotoGrid from '../components/PhotoGrid.astro';
 import { fiveStar } from '../lib/data.mjs';
-import { srcset, GRID_SIZES } from '../lib/cdn.mjs';
+import { srcset, ogImageUrl, GRID_SIZES } from '../lib/cdn.mjs';
 import { SITE_NAME } from '../lib/site.mjs';
 
 const photos = fiveStar();
@@ -11,10 +11,18 @@ const lcp = photos[0];
 
 <Base
   title={`${SITE_NAME} — Photography`}
-  description="Black & white photography — selected work, shuffled on every visit."
+  description="Street and landscape photography by Arnav Jindal — selected work, shuffled on every visit."
   active="home"
   captionLeft="SELECTED — SHUFFLED ON EVERY VISIT"
   preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+  ogImage={lcp
+    ? {
+        url: ogImageUrl(lcp.key),
+        width: 1200,
+        height: Math.round((1200 * lcp.height) / lcp.width),
+        alt: `${lcp.title} — ${lcp.album}`,
+      }
+    : null}
 >
   <PhotoGrid {photos} shuffle />
 </Base>

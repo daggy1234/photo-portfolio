@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.astro';
 import Footer from '../../components/Footer.astro';
 import { albums } from '../../lib/data.mjs';
-import { srcset, GRID_SIZES } from '../../lib/cdn.mjs';
+import { srcset, ogImageUrl, imageUrl, GRID_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
 
 export function getStaticPaths() {
@@ -12,16 +12,33 @@ export function getStaticPaths() {
 
 const { album } = Astro.props;
 const lcp = album.photos[0];
+
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'ImageGallery',
+  name: `${album.name} — ${SITE_NAME}`,
+  description: `${album.count} photographs from ${album.name} by Arnav Jindal.`,
+  url: Astro.site ? new URL(`/albums/${album.slug}/`, Astro.site).href : undefined,
+  image: album.photos.slice(0, 6).map((p) => imageUrl(p.key, 1200)),
+  author: { '@type': 'Person', name: 'Arnav Jindal' },
+};
 ---
 
 <Base
   title={`${album.name} — ${SITE_NAME}`}
-  description={`${album.name} — ${album.count} black & white photographs.`}
+  description={`${album.count} photographs from ${album.name} by Arnav Jindal${album.year ? `, ${album.year}` : ''}.`}
   active="albums"
   captionLeft={`${album.name.toUpperCase()} — ALBUM`}
   captionRight={`${album.count} PHOTOS · NEWEST FIRST`}
   preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+  ogImage={{
+    url: ogImageUrl(album.cover.key),
+    width: 1200,
+    height: Math.round((1200 * album.cover.height) / album.cover.width),
+    alt: `${album.name} album cover`,
+  }}
 >
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />
   <PhotoGrid photos={album.photos} />
   <Footer />
 </Base>

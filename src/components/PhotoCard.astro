@@ -34,8 +34,9 @@ const fullUrl = imageUrl(p.key, FULL_WIDTH);
   data-tags={p.keywords.join(',')}
 >
   <div class="ph-frame">
-    <!-- Without JS this opens the full-size photo; lightbox.js hijacks it -->
-    <a href={fullUrl} data-lightbox aria-label={`Open ${p.title}`}>
+    <!-- Real link to the photo's static page (crawlable, works without JS);
+         lightbox.js hijacks the click for the in-grid overlay -->
+    <a href={`/photo/${p.id}/`} data-lightbox aria-label={`Open ${p.title}`}>
       <img
         src={imageUrl(p.key, 800)}
         srcset={srcset(p.key, GRID_WIDTHS)}

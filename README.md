@@ -59,6 +59,10 @@ npm run preview    # serve the built dist/ locally
   infinite-scroll batching, the lightbox (EXIF panel, ←/→/Esc, `#/photo/<id>` deep links), and a
   tag filter that stays hidden until photos carry keywords. Everything degrades with JS disabled.
 - **Fonts**: Helvetica system stack for UI; Source Serif 4 700 self-hosted in `public/fonts/`.
+- **SEO / embeds**: every photo has a static, crawlable `/photo/<id>/` page; all pages ship
+  OpenGraph + Twitter cards (embed images use `format=jpeg` — see `ogImageUrl()`), canonical
+  URLs, JSON-LD (Photograph/Person/ImageGallery), a sitemap, and robots.txt. The production
+  domain lives in `astro.config.mjs` (`site`) and `public/robots.txt`.
 - **Deploy**: Cloudflare's Git integration builds on every push using `wrangler.jsonc`, which
   serves `dist/` as pure static assets (build command `npm run build`, deploy command
   `npx wrangler deploy`; no `@astrojs/cloudflare` adapter — it forces server output in Astro 6).

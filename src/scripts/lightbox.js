@@ -6,6 +6,8 @@ const root = document.querySelector('[data-lightbox-root]');
 const grid = document.querySelector('[data-grid]');
 
 if (root && grid) {
+  // The page we restore the URL to when the lightbox closes
+  const basePath = location.pathname + location.search;
   const img = root.querySelector('[data-lb-img]');
   const title = root.querySelector('[data-lb-title]');
   const loc = root.querySelector('[data-lb-loc]');
@@ -66,7 +68,9 @@ if (root && grid) {
     );
     tagsRow.style.display = tags.length ? '' : 'none';
     pos.textContent = `${pad(current + 1)} / ${pad(list.length)}`;
-    history.replaceState(null, '', `#/photo/${d.id}`);
+    // Real path (a static page exists there), so the URL is shareable and
+    // unfurls with the photo if copied while browsing.
+    history.replaceState(null, '', `/photo/${d.id}/`);
   }
 
   function open(i) {
@@ -92,7 +96,7 @@ if (root && grid) {
     vt?.finished.finally(() => {
       if (thumb) thumb.style.viewTransitionName = '';
     });
-    history.replaceState(null, '', location.pathname + location.search);
+    history.replaceState(null, '', basePath);
     lastFocus?.focus();
   }
 
@@ -140,7 +144,7 @@ if (root && grid) {
     }
   });
 
-  // Deep link: #/photo/<id>
+  // Legacy hash deep link (#/photo/<id>) from before static photo pages
   const m = location.hash.match(/^#\/photo\/(.+)$/);
   if (m) {
     const i = cards().findIndex((c) => c.dataset.id === m[1]);

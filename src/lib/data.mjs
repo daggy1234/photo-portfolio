@@ -49,7 +49,8 @@ function normalize(p) {
     id: `${slugify(p.album)}-${slugify(stem)}`,
     album: p.album,
     albumSlug: slugify(p.album),
-    title: stem,
+    title: p.title || stem, // real Lightroom title when the manifest has one
+    caption: p.caption || '',
     rating: p.rating ?? 0,
     width,
     height,
