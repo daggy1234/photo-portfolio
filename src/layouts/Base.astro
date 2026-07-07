@@ -39,14 +39,12 @@ const {
       )
     }
     <script is:inline>
-      // Pre-paint theme: localStorage first, then OS preference. Keep inline
-      // and first so there is no flash of the wrong theme.
+      // Pre-paint theme: a stored toggle choice wins, otherwise the site
+      // default is dark. Keep inline and first so there is no flash.
       (function () {
         try {
-          var t =
-            localStorage.getItem('pf-theme') ||
-            (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-          document.documentElement.dataset.theme = t;
+          document.documentElement.dataset.theme =
+            localStorage.getItem('pf-theme') || 'dark';
         } catch (e) {}
       })();
     </script>

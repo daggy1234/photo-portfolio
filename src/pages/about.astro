@@ -1,0 +1,120 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import WorldMap from '../components/WorldMap.astro';
+import { SITE_NAME, INSTAGRAM_URL } from '../lib/site.mjs';
+import { visitedCountries } from '../lib/worldmap.mjs';
+
+const countryCount = visitedCountries().length;
+---
+
+<Base
+  title={`About — ${SITE_NAME}`}
+  description="Arnav Jindal — amateur photographer. Street and landscape work on a Fujifilm X-T5 and 35mm black & white film, self-processed in a darkroom."
+  active="about"
+  captionLeft="ABOUT — THE PHOTOGRAPHER"
+  captionRight={`STREET · LANDSCAPE · ${countryCount} COUNTRIES`}
+>
+  <section class="about-section container">
+    <div class="about-grid">
+      <div class="about-photo">
+        <img
+          src="/assets/about_photo.jpg"
+          alt="Arnav Jindal"
+          width="1365"
+          height="2048"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+      <div class="about-text">
+        <p>
+          <strong>I'M ARNAV JINDAL</strong> — an amateur photographer who loves to travel and
+          take photos. I usually shoot a Fujifilm X-T5 (upgraded from an X-E3), and I experiment
+          with 35mm film — especially black &amp; white, which I process myself in a darkroom.
+        </p>
+        <p>
+          Most of my work is street photography, made wherever travel takes me. I also hike, and
+          I love photographing the stunning landscapes of the world. I travel light: a wide
+          angle, a 23mm for the street, and a flat 27mm pancake.
+        </p>
+        <p>
+          Follow along on my photography Instagram, where I hope to post more than just stills.
+        </p>
+        <div class="about-follow">
+          <span class="follow-label">FOLLOW</span>
+          <a href={INSTAGRAM_URL}>INSTAGRAM →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <WorldMap />
+
+  <Footer />
+</Base>
+
+<style>
+  .about-section {
+    padding-top: 56px;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 56px;
+    align-items: stretch;
+  }
+  /* The photo fills exactly the height of the text column (the text sets the
+     row height; the image is absolutely positioned so it can't stretch it). */
+  .about-photo {
+    position: relative;
+    background: var(--ph);
+  }
+  .about-photo img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about-text p {
+    font: 400 13px/1.9 var(--sans);
+    color: var(--ink);
+    margin: 0 0 22px;
+    max-width: 58ch;
+  }
+  .about-text strong {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .about-follow {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-top: 34px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .follow-label {
+    font: 700 10px var(--sans);
+    letter-spacing: 0.26em;
+  }
+  .about-follow a {
+    font: 400 9.5px var(--sans);
+    letter-spacing: 0.18em;
+    color: var(--sub);
+  }
+  .about-follow a:hover {
+    color: var(--ink);
+  }
+  @media (max-width: 860px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .about-photo {
+      max-width: 480px;
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

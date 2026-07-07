@@ -1,32 +1,22 @@
 /* ============ Tokens (design/README.md — two themes, two line weights) ============ */
+/* Dark is the site default (no-JS included); light is the opt-in via the toggle. */
 :root {
-  --bg: #ffffff;
-  --ink: #0a0a0a;
-  --sub: #8f8f8f;
-  --line: #e8e8e8;
-  --ov: rgba(0, 0, 0, 0.55);
-  --ph: #ececec; /* image placeholder tone while loading */
-  --serif: 'Source Serif 4', Georgia, serif;
-  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-:root[data-theme='dark'] {
   --bg: #0a0a0a;
   --ink: #ffffff;
   --sub: #7a7a7a;
   --line: #222222;
   --ov: rgba(0, 0, 0, 0.6);
-  --ph: #161616;
+  --ph: #161616; /* image placeholder tone while loading */
+  --serif: 'Source Serif 4', Georgia, serif;
+  --sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
-/* No-JS / pre-paint fallback: honor OS preference until the toggle script sets data-theme */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0a0a0a;
-    --ink: #ffffff;
-    --sub: #7a7a7a;
-    --line: #222222;
-    --ov: rgba(0, 0, 0, 0.6);
-    --ph: #161616;
-  }
+:root[data-theme='light'] {
+  --bg: #ffffff;
+  --ink: #0a0a0a;
+  --sub: #8f8f8f;
+  --line: #e8e8e8;
+  --ov: rgba(0, 0, 0, 0.55);
+  --ph: #ececec;
 }
 
 @font-face {

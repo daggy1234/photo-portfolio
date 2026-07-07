@@ -1,0 +1,111 @@
+{
+  "_edit": "Add a country per entry, in visit order. Optional 'match' = the Natural Earth country name when it differs from the display name (used to color the map). Optional 'lonLat': [longitude, latitude] draws a dot for territories the map doesn't include.",
+  "countries": [
+    {
+      "name": "India"
+    },
+    {
+      "name": "Sri Lanka"
+    },
+    {
+      "name": "Thailand"
+    },
+    {
+      "name": "Singapore"
+    },
+    {
+      "name": "Indonesia"
+    },
+    {
+      "name": "UAE",
+      "match": "United Arab Emirates"
+    },
+    {
+      "name": "Italy"
+    },
+    {
+      "name": "Vatican City",
+      "match": "Vatican"
+    },
+    {
+      "name": "USA",
+      "match": "United States of America"
+    },
+    {
+      "name": "France"
+    },
+    {
+      "name": "Belgium"
+    },
+    {
+      "name": "Croatia"
+    },
+    {
+      "name": "Montenegro"
+    },
+    {
+      "name": "Canada"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "Spain"
+    },
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Austria"
+    },
+    {
+      "name": "Monaco"
+    },
+    {
+      "name": "Portugal"
+    },
+    {
+      "name": "Netherlands"
+    },
+    {
+      "name": "Liechtenstein"
+    },
+    {
+      "name": "UK",
+      "match": "United Kingdom"
+    },
+    {
+      "name": "Ireland"
+    },
+    {
+      "name": "Hungary"
+    },
+    {
+      "name": "Slovakia"
+    },
+    {
+      "name": "Qatar"
+    },
+    {
+      "name": "Chile"
+    },
+    {
+      "name": "Argentina"
+    },
+    {
+      "name": "Japan"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "Macao"
+    },
+    {
+      "name": "Hong Kong"
+    },
+    {
+      "name": "Taiwan"
+    }
+  ]
+}

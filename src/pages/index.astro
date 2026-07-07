@@ -14,7 +14,6 @@ const lcp = photos[0];
   description="Black & white photography — selected work, shuffled on every visit."
   active="home"
   captionLeft="SELECTED — SHUFFLED ON EVERY VISIT"
-  captionRight="BLACK & WHITE · 35MM + DIGITAL"
   preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
 >
   <PhotoGrid {photos} shuffle />
