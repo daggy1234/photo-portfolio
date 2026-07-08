@@ -3,7 +3,8 @@ import Base from '../../layouts/Base.astro';
 import Footer from '../../components/Footer.astro';
 import { allPhotos, slugify } from '../../lib/data.mjs';
 import { imageUrl, srcset, ogImageUrl, FULL_WIDTH } from '../../lib/cdn.mjs';
-import { SITE_NAME, COPYRIGHT_YEAR, INSTAGRAM_URL } from '../../lib/site.mjs';
+import { SITE_NAME, COPYRIGHT_YEAR } from '../../lib/site.mjs';
+import { graph, personNode, personRef, breadcrumbs } from '../../lib/schema.mjs';
 
 // One real, crawlable page per photo — this is what makes shared links
 // unfurl with the actual image (hash fragments never reach crawlers).
@@ -30,24 +31,34 @@ const exif = [
 ].filter(([, v]) => v);
 
 const licenseUrl = Astro.site ? new URL('/license/', Astro.site).href : '/license/';
-const ld = {
-  '@context': 'https://schema.org',
-  '@type': 'Photograph',
-  name: `${p.title} — ${p.album}`,
-  description,
-  contentUrl: imageUrl(p.key, FULL_WIDTH),
-  thumbnailUrl: imageUrl(p.key, 400),
-  width: p.width,
-  height: p.height,
-  ...(p.dateTaken && { dateCreated: p.dateTaken }),
-  ...(p.keywords.length && { keywords: p.keywords.join(', ') }),
-  contentLocation: p.album,
-  creator: { '@type': 'Person', name: 'Arnav Jindal', sameAs: INSTAGRAM_URL },
-  copyrightNotice: `© ${COPYRIGHT_YEAR} Arnav Jindal`,
-  license: licenseUrl,
-  acquireLicensePage: licenseUrl,
-  creditText: SITE_NAME,
-};
+const ld = graph(
+  {
+    '@type': 'Photograph',
+    name: `${p.title} — ${p.album}`,
+    description,
+    ...(Astro.site && { url: new URL(`/photo/${p.id}/`, Astro.site).href }),
+    contentUrl: imageUrl(p.key, FULL_WIDTH),
+    thumbnailUrl: imageUrl(p.key, 400),
+    width: p.width,
+    height: p.height,
+    ...(p.dateTaken && { dateCreated: p.dateTaken, datePublished: p.dateTaken }),
+    ...(p.keywords.length && { keywords: p.keywords.join(', ') }),
+    contentLocation: p.album,
+    creator: Astro.site ? personRef(Astro.site) : { '@type': 'Person', name: 'Arnav Jindal' },
+    copyrightNotice: `© ${COPYRIGHT_YEAR} Arnav Jindal`,
+    license: licenseUrl,
+    acquireLicensePage: licenseUrl,
+    creditText: SITE_NAME,
+  },
+  Astro.site && personNode(Astro.site),
+  Astro.site &&
+    breadcrumbs(Astro.site, [
+      ['Home', '/'],
+      ['Albums', '/albums/'],
+      [p.album, `/albums/${p.albumSlug}/`],
+      [p.title, `/photo/${p.id}/`],
+    ])
+);
 ---
 
 <Base
@@ -64,7 +75,12 @@ const ld = {
     alt: `${p.title} — ${p.album}`,
   }}
 >
-  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(ld)} />
+    {p.dateTaken && <meta property="article:published_time" content={p.dateTaken} />}
+    <meta property="article:author" content="Arnav Jindal" />
+    {p.keywords.map((t) => <meta property="article:tag" content={t} />)}
+  </Fragment>
 
   <section class="photo-page container">
     <div class="pp-photo">

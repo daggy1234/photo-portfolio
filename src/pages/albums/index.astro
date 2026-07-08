@@ -4,6 +4,7 @@ import Footer from '../../components/Footer.astro';
 import { albums } from '../../lib/data.mjs';
 import { imageUrl, srcset, ogImageUrl, COVER_WIDTHS, COVER_SIZES, COVER_WIDE_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
+import { graph, personNode, personRef, breadcrumbs } from '../../lib/schema.mjs';
 
 const list = albums();
 const totalPhotos = list.reduce((n, a) => n + a.count, 0);
@@ -12,6 +13,32 @@ const meta = (a) => `${a.year ?? ''}${a.year ? ' — ' : ''}${a.count} PHOTOS`;
 // Contact-sheet rhythm from the mock: standard 15/10 tiles in pairs; when the
 // count is odd the last tile goes full-width at 32/10.
 const isWide = (i) => i === list.length - 1 && list.length % 2 === 1;
+
+const ld = Astro.site
+  ? graph(
+      {
+        '@type': 'CollectionPage',
+        name: `Albums — ${SITE_NAME}`,
+        url: new URL('/albums/', Astro.site).href,
+        author: personRef(Astro.site),
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: list.length,
+          itemListElement: list.map((a, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: a.name,
+            url: new URL(`/albums/${a.slug}/`, Astro.site).href,
+          })),
+        },
+      },
+      personNode(Astro.site),
+      breadcrumbs(Astro.site, [
+        ['Home', '/'],
+        ['Albums', '/albums/'],
+      ])
+    )
+  : null;
 ---
 
 <Base
@@ -29,6 +56,7 @@ const isWide = (i) => i === list.length - 1 && list.length % 2 === 1;
       }
     : null}
 >
+  {ld && <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />}
   <section class="tiles-section container">
     <div class="tiles">
       {

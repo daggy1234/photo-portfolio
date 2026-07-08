@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import { albums } from '../../lib/data.mjs';
 import { srcset, ogImageUrl, imageUrl, GRID_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
+import { graph, personNode, personRef, breadcrumbs } from '../../lib/schema.mjs';
 
 export function getStaticPaths() {
   return albums().map((a) => ({ params: { album: a.slug }, props: { album: a } }));
@@ -13,15 +14,34 @@ export function getStaticPaths() {
 const { album } = Astro.props;
 const lcp = album.photos[0];
 
-const ld = {
-  '@context': 'https://schema.org',
-  '@type': 'ImageGallery',
-  name: `${album.name} — ${SITE_NAME}`,
-  description: `${album.count} photographs from ${album.name} by Arnav Jindal.`,
-  url: Astro.site ? new URL(`/albums/${album.slug}/`, Astro.site).href : undefined,
-  image: album.photos.slice(0, 6).map((p) => imageUrl(p.key, 1200)),
-  author: { '@type': 'Person', name: 'Arnav Jindal' },
-};
+const ld = graph(
+  {
+    '@type': 'ImageGallery',
+    name: `${album.name} — ${SITE_NAME}`,
+    description: `${album.count} photographs from ${album.name} by Arnav Jindal.`,
+    url: Astro.site ? new URL(`/albums/${album.slug}/`, Astro.site).href : undefined,
+    image: album.photos.slice(0, 6).map((p) => imageUrl(p.key, 1200)),
+    author: Astro.site ? personRef(Astro.site) : { '@type': 'Person', name: 'Arnav Jindal' },
+    // Enumerable list of the album's photo pages for crawlers/answer engines
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: album.count,
+      itemListElement: album.photos.map((p, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: p.title,
+        url: Astro.site ? new URL(`/photo/${p.id}/`, Astro.site).href : `/photo/${p.id}/`,
+      })),
+    },
+  },
+  Astro.site && personNode(Astro.site),
+  Astro.site &&
+    breadcrumbs(Astro.site, [
+      ['Home', '/'],
+      ['Albums', '/albums/'],
+      [album.name, `/albums/${album.slug}/`],
+    ])
+);
 ---
 
 <Base

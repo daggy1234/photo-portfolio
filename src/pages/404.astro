@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_NAME } from '../lib/site.mjs';
+---
+
+<Base
+  title={`Not found — ${SITE_NAME}`}
+  description="This page does not exist."
+  active=""
+  captionLeft="404 — NOT FOUND"
+>
+  <section class="nf container">
+    <h1>Nothing here.</h1>
+    <p>
+      The page you're after doesn't exist — it may have moved when an album was renamed.
+    </p>
+    <a href="/">← BACK TO THE PHOTOS</a>
+  </section>
+  <Footer />
+</Base>
+
+<style>
+  .nf {
+    padding-top: 96px;
+    padding-bottom: 56px;
+  }
+  .nf h1 {
+    font: 700 46px var(--serif);
+    margin: 0 0 16px;
+  }
+  .nf p {
+    font: 400 13px/1.8 var(--sans);
+    color: var(--sub);
+    margin: 0 0 34px;
+    max-width: 48ch;
+  }
+  .nf a {
+    font: 400 9.5px var(--sans);
+    letter-spacing: 0.18em;
+    color: var(--sub);
+  }
+  .nf a:hover {
+    color: var(--ink);
+  }
+</style>

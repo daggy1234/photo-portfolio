@@ -61,8 +61,11 @@ npm run preview    # serve the built dist/ locally
 - **Fonts**: Helvetica system stack for UI; Source Serif 4 700 self-hosted in `public/fonts/`.
 - **SEO / embeds**: every photo has a static, crawlable `/photo/<id>/` page; all pages ship
   OpenGraph + Twitter cards (embed images use `format=jpeg` — see `ogImageUrl()`), canonical
-  URLs, JSON-LD (Photograph/Person/ImageGallery), a sitemap, and robots.txt. The production
-  domain lives in `astro.config.mjs` (`site`) and `public/robots.txt`.
+  URLs, and JSON-LD entity graphs (WebSite/Person/Photograph/ImageGallery/CollectionPage/
+  BreadcrumbList, all referencing one `#person` @id). Also generated per build:
+  `sitemap-index.xml`, `image-sitemap.xml` (Google Images), and `llms.txt` (AI crawlers).
+  The canonical domain lives in `astro.config.mjs` (`site`), `public/robots.txt`, and the
+  two generated endpoints in `src/pages/`.
 - **Deploy**: Cloudflare's Git integration builds on every push using `wrangler.jsonc`, which
   serves `dist/` as pure static assets (build command `npm run build`, deploy command
   `npx wrangler deploy`; no `@astrojs/cloudflare` adapter — it forces server output in Astro 6).

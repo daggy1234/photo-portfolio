@@ -4,21 +4,26 @@ import Footer from '../components/Footer.astro';
 import WorldMap from '../components/WorldMap.astro';
 import { SITE_NAME, INSTAGRAM_URL } from '../lib/site.mjs';
 import { visitedCountries } from '../lib/worldmap.mjs';
+import { graph, personNode, personRef, breadcrumbs } from '../lib/schema.mjs';
 
 const countryCount = visitedCountries().length;
 
-const ld = {
-  '@context': 'https://schema.org',
-  '@type': 'Person',
-  name: 'Arnav Jindal',
-  url: Astro.site ? new URL('/about/', Astro.site).href : '/about/',
-  image: Astro.site ? new URL('/assets/about_photo.jpg', Astro.site).href : '/assets/about_photo.jpg',
-  sameAs: [INSTAGRAM_URL],
-  description:
-    'Amateur photographer — street and landscape work on a Fujifilm X-T5 and 35mm film.',
-  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Duke University' },
-  knowsAbout: ['street photography', 'landscape photography', '35mm film photography', 'darkroom processing'],
-};
+// ProfilePage wrapping the site-wide Person entity (AEO: this page is the
+// authoritative "who is this" node everything else references by @id).
+const ld = Astro.site
+  ? graph(
+      {
+        '@type': 'ProfilePage',
+        url: new URL('/about/', Astro.site).href,
+        mainEntity: personRef(Astro.site),
+      },
+      personNode(Astro.site),
+      breadcrumbs(Astro.site, [
+        ['Home', '/'],
+        ['About', '/about/'],
+      ])
+    )
+  : null;
 ---
 
 <Base
@@ -30,7 +35,7 @@ const ld = {
   ogType="profile"
   ogImage={{ url: Astro.site ? new URL('/assets/about_photo.jpg', Astro.site).href : '/assets/about_photo.jpg', width: 1365, height: 2048, alt: 'Arnav Jindal' }}
 >
-  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />
+  {ld && <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />}
   <section class="about-section container">
     <div class="about-grid">
       <div class="about-photo">

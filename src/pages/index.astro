@@ -4,9 +4,11 @@ import PhotoGrid from '../components/PhotoGrid.astro';
 import { fiveStar } from '../lib/data.mjs';
 import { srcset, ogImageUrl, GRID_SIZES } from '../lib/cdn.mjs';
 import { SITE_NAME } from '../lib/site.mjs';
+import { graph, webSiteNode, personNode } from '../lib/schema.mjs';
 
 const photos = fiveStar();
 const lcp = photos[0];
+const ld = Astro.site ? graph(webSiteNode(Astro.site), personNode(Astro.site)) : null;
 ---
 
 <Base
@@ -24,5 +26,6 @@ const lcp = photos[0];
       }
     : null}
 >
+  {ld && <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />}
   <PhotoGrid {photos} shuffle />
 </Base>

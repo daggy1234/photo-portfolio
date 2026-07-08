@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import Nav from '../components/Nav.astro';
-import { SITE_NAME } from '../lib/site.mjs';
+import { SITE_NAME, INSTAGRAM_URL, TWITTER_HANDLE } from '../lib/site.mjs';
 
 const {
   title,
@@ -15,6 +15,7 @@ const {
 } = Astro.props;
 
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : null;
+const twitter = TWITTER_HANDLE && (TWITTER_HANDLE.startsWith('@') ? TWITTER_HANDLE : `@${TWITTER_HANDLE}`);
 ---
 
 <!doctype html>
@@ -27,7 +28,10 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : nu
     <meta name="generator" content={Astro.generator} />
     <meta name="author" content="Arnav Jindal" />
     <meta name="theme-color" content="#0a0a0a" />
+    <!-- Let Google show full-size image previews in Search/Discover -->
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="me" href={INSTAGRAM_URL} />
     {canonical && <link rel="canonical" href={canonical} />}
 
     <!-- Link unfurls: OpenGraph (iMessage/WhatsApp/Slack/Discord/FB) + Twitter -->
@@ -35,11 +39,13 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : nu
     <meta property="og:title" content={title} />
     {description && <meta property="og:description" content={description} />}
     <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="en_US" />
     {canonical && <meta property="og:url" content={canonical} />}
     {
       ogImage && (
         <>
           <meta property="og:image" content={ogImage.url} />
+          <meta property="og:image:type" content="image/jpeg" />
           {ogImage.width && <meta property="og:image:width" content={String(ogImage.width)} />}
           {ogImage.height && <meta property="og:image:height" content={String(ogImage.height)} />}
           {ogImage.alt && <meta property="og:image:alt" content={ogImage.alt} />}
@@ -51,6 +57,8 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : nu
     {description && <meta name="twitter:description" content={description} />}
     {ogImage && <meta name="twitter:image" content={ogImage.url} />}
     {ogImage?.alt && <meta name="twitter:image:alt" content={ogImage.alt} />}
+    {twitter && <meta name="twitter:site" content={twitter} />}
+    {twitter && <meta name="twitter:creator" content={twitter} />}
 
     <link rel="preconnect" href="https://photocdn.dag.gy" />
     <link

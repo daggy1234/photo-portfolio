@@ -5,6 +5,7 @@ import Footer from '../../components/Footer.astro';
 import { allPhotos, slugify } from '../../lib/data.mjs';
 import { srcset, ogImageUrl, GRID_SIZES } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
+import { graph, personNode, personRef, breadcrumbs } from '../../lib/schema.mjs';
 
 // One static page per keyword: every photo carrying that tag, across all
 // albums and ratings, newest first.
@@ -29,6 +30,33 @@ export function getStaticPaths() {
 const { tag, photos } = Astro.props;
 const albumCount = new Set(photos.map((p) => p.album)).size;
 const lcp = photos[0];
+
+const ld = Astro.site
+  ? graph(
+      {
+        '@type': 'CollectionPage',
+        name: `${tag} — ${SITE_NAME}`,
+        description: `${photos.length} photographs tagged "${tag}" by Arnav Jindal.`,
+        url: new URL(`/tags/${slugify(tag)}/`, Astro.site).href,
+        author: personRef(Astro.site),
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: photos.length,
+          itemListElement: photos.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            name: p.title,
+            url: new URL(`/photo/${p.id}/`, Astro.site).href,
+          })),
+        },
+      },
+      personNode(Astro.site),
+      breadcrumbs(Astro.site, [
+        ['Home', '/'],
+        [tag, `/tags/${slugify(tag)}/`],
+      ])
+    )
+  : null;
 ---
 
 <Base
@@ -47,6 +75,7 @@ const lcp = photos[0];
       }
     : null}
 >
+  {ld && <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />}
   <PhotoGrid {photos} />
   <Footer />
 </Base>

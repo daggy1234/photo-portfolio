@@ -1,4 +1,47 @@
+# Answer-engine / retrieval bots: welcome. These fetch pages to cite and
+# link them in AI answers (AEO) — that's discovery, not training.
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+# Training-only crawlers: no. LICENSE-PHOTOS forbids ML-training use of the
+# photographs, so be consistent here. (Googlebot/Bingbot still index the
+# site for search + AI Overviews; Google-Extended only gates Gemini training.)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# Everyone else (Googlebot, Bingbot, DuckDuckBot, ...)
 User-agent: *
 Allow: /
 
 Sitemap: https://photo.dag.gy/sitemap-index.xml
+Sitemap: https://photo.dag.gy/image-sitemap.xml
