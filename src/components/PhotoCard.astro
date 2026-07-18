@@ -3,24 +3,23 @@ import {
   imageUrl,
   srcset,
   GRID_WIDTHS,
-  GRID_SIZES,
-  GRID_SIZES_WIDE,
+  gridSizes,
   FULL_WIDTH,
 } from '../lib/cdn.mjs';
-import { rowSpan, rowSpanWide, isWide } from '../lib/masonry.mjs';
 
 const { photo, index = 99 } = Astro.props;
 const p = photo;
 
-const wide = isWide(p.ratio);
-// Above-the-fold images load eagerly; the first two get high priority.
+// Above-the-fold images load eagerly; only the likely LCP gets high priority.
 const eager = index < 4;
 const fullUrl = imageUrl(p.key, FULL_WIDTH);
+const basis = Math.round(p.ratio * 260);
 ---
 
 <figure
-  class:list={['ph-card', { wide }]}
-  style={`--span:${rowSpan(p.ratio)};--span2:${rowSpanWide(p.ratio)};--ar:${p.width}/${p.height}`}
+  class="ph-card"
+  style={`--ratio:${p.ratio};--basis:${basis}px;--ar:${p.width}/${p.height}`}
+  data-ratio={p.ratio}
   data-id={p.id}
   data-title={p.title}
   data-album={p.album}
@@ -40,13 +39,13 @@ const fullUrl = imageUrl(p.key, FULL_WIDTH);
       <img
         src={imageUrl(p.key, 800)}
         srcset={srcset(p.key, GRID_WIDTHS)}
-        sizes={wide ? GRID_SIZES_WIDE : GRID_SIZES}
+        sizes={gridSizes(p.ratio)}
         width={p.width}
         height={p.height}
         alt={`${p.title} — ${p.album}`}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
-        fetchpriority={index < 2 ? 'high' : undefined}
+        fetchpriority={index === 0 ? 'high' : undefined}
       />
     </a>
   </div>

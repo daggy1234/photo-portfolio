@@ -13,6 +13,8 @@ export function getStaticPaths() {
 }
 
 const { photo: p } = Astro.props;
+const photoSrcset = srcset(p.key, [800, 1200, FULL_WIDTH]);
+const photoSizes = '(max-width: 720px) 100vw, calc(100vw - 430px)';
 
 const details = [p.camera, p.lens, p.exposure].filter(Boolean).join(', ');
 const description = [
@@ -67,6 +69,7 @@ const ld = graph(
   active=""
   captionLeft={`${p.album.toUpperCase()} — PHOTOGRAPH`}
   captionRight={p.dateDisplay?.toUpperCase() || ''}
+  preload={{ srcset: photoSrcset, sizes: photoSizes }}
   ogType="article"
   ogImage={{
     url: ogImageUrl(p.key),
@@ -86,8 +89,8 @@ const ld = graph(
     <div class="pp-photo">
       <img
         src={imageUrl(p.key, 1200)}
-        srcset={`${imageUrl(p.key, 800)} 800w, ${imageUrl(p.key, 1200)} 1200w, ${imageUrl(p.key, FULL_WIDTH)} 2000w`}
-        sizes="(max-width: 720px) 100vw, calc(100vw - 430px)"
+        srcset={photoSrcset}
+        sizes={photoSizes}
         width={p.width}
         height={p.height}
         alt={`${p.title} — ${p.album}`}

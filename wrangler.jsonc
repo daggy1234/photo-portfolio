@@ -1,17 +1,42 @@
-// Static-assets-only Workers deploy: `dist/` is served directly from
-// Cloudflare's edge. There is deliberately NO Worker script and NO
-// @astrojs/cloudflare adapter — the site is fully prerendered static HTML
-// (the Astro 6 adapter forces server output and would break this).
+// Astro still prerenders every route. A tiny Worker runs only in front of
+// document requests to record aggregate, first-party page analytics; hashed
+// assets, fonts and images continue straight through the static asset path.
 //
 // Cloudflare Git build settings for this repo:
 //   Build command:  npm run build
 //   Deploy command: npx wrangler deploy
 {
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "photo-portfolio",
-  "compatibility_date": "2026-07-07",
+  "main": "./src/worker.ts",
+  // Latest date supported by Wrangler 4.107's bundled local runtime.
+  "compatibility_date": "2026-07-08",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
+    "run_worker_first": [
+      "/*",
+      "!/_astro/*",
+      "!/assets/*",
+      "!/fonts/*",
+      "!/cdn-cgi/*",
+      "!/favicon.svg",
+      "!/robots.txt",
+      "!/*.xml",
+      "!/*.txt"
+    ]
+  },
+  "analytics_engine_datasets": [
+    {
+      "binding": "PAGE_VIEWS",
+      "dataset": "photo_portfolio_page_views"
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
   }
 }

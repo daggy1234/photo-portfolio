@@ -7,6 +7,16 @@ import { visitedCountries } from '../lib/worldmap.mjs';
 import { graph, personNode, personRef, breadcrumbs } from '../lib/schema.mjs';
 
 const countryCount = visitedCountries().length;
+const imageOrigin = Astro.site ?? Astro.url.origin;
+const aboutImageUrl = (width, format = 'auto') =>
+  new URL(
+    `/cdn-cgi/image/width=${width},format=${format},quality=82/assets/about_photo.jpg`,
+    imageOrigin
+  ).href;
+const aboutWidths = [480, 800, 1200];
+const aboutSrcset = aboutWidths.map((width) => `${aboutImageUrl(width)} ${width}w`).join(', ');
+const aboutSizes = '(max-width: 860px) min(480px, calc(100vw - 80px)), min(586px, 40vw)';
+const aboutOgPath = aboutImageUrl(1200, 'jpeg');
 
 // ProfilePage wrapping the site-wide Person entity (AEO: this page is the
 // authoritative "who is this" node everything else references by @id).
@@ -33,18 +43,22 @@ const ld = Astro.site
   captionLeft="ABOUT — THE PHOTOGRAPHER"
   captionRight={`STREET · LANDSCAPE · ${countryCount} COUNTRIES`}
   ogType="profile"
-  ogImage={{ url: Astro.site ? new URL('/assets/about_photo.jpg', Astro.site).href : '/assets/about_photo.jpg', width: 1365, height: 2048, alt: 'Arnav Jindal' }}
+  preload={{ srcset: aboutSrcset, sizes: aboutSizes }}
+  ogImage={{ url: aboutOgPath, width: 1200, height: 1800, alt: 'Arnav Jindal' }}
 >
   {ld && <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(ld)} />}
   <section class="about-section container">
     <div class="about-grid">
       <div class="about-photo">
         <img
-          src="/assets/about_photo.jpg"
+          src={aboutImageUrl(800)}
+          srcset={aboutSrcset}
+          sizes={aboutSizes}
           alt="Arnav Jindal"
           width="1365"
           height="2048"
           fetchpriority="high"
+          loading="eager"
           decoding="async"
         />
       </div>

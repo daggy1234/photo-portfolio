@@ -47,6 +47,9 @@ const ld = Astro.site
   active="albums"
   captionLeft="ALBUMS — BY LOCATION"
   captionRight={`${pad(list.length)} COLLECTIONS · ${totalPhotos} PHOTOS`}
+  preload={list[0]
+    ? { srcset: srcset(list[0].cover.key, COVER_WIDTHS), sizes: COVER_SIZES }
+    : null}
   ogImage={list[0]
     ? {
         url: ogImageUrl(list[0].cover.key),
@@ -69,6 +72,7 @@ const ld = Astro.site
               alt={`${a.name} album cover`}
               loading={i < 2 ? 'eager' : 'lazy'}
               decoding="async"
+              fetchpriority={i === 0 ? 'high' : undefined}
             />
             <div class="tile-overlay">
               <div class="tile-name">{a.name}</div>

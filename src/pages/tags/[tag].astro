@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PhotoGrid from '../../components/PhotoGrid.astro';
 import Footer from '../../components/Footer.astro';
 import { allPhotos, slugify } from '../../lib/data.mjs';
-import { srcset, ogImageUrl, GRID_SIZES } from '../../lib/cdn.mjs';
+import { srcset, ogImageUrl, gridSizes } from '../../lib/cdn.mjs';
 import { SITE_NAME } from '../../lib/site.mjs';
 import { graph, personNode, personRef, breadcrumbs } from '../../lib/schema.mjs';
 
@@ -30,6 +30,7 @@ export function getStaticPaths() {
 const { tag, photos } = Astro.props;
 const albumCount = new Set(photos.map((p) => p.album)).size;
 const lcp = photos[0];
+const lcpSizes = lcp ? gridSizes(lcp.ratio) : null;
 
 const ld = Astro.site
   ? graph(
@@ -65,7 +66,7 @@ const ld = Astro.site
   active=""
   captionLeft={`${tag.toUpperCase()} — TAG`}
   captionRight={`${photos.length} PHOTOS · ${albumCount} ${albumCount === 1 ? 'ALBUM' : 'ALBUMS'}`}
-  preload={lcp ? { srcset: srcset(lcp.key), sizes: GRID_SIZES } : null}
+  preload={lcp ? { srcset: srcset(lcp.key), sizes: lcpSizes } : null}
   ogImage={lcp
     ? {
         url: ogImageUrl(lcp.key),

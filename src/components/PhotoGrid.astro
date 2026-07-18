@@ -6,17 +6,12 @@ import Lightbox from './Lightbox.astro';
 const { photos, shuffle = false } = Astro.props;
 ---
 
-<section class="masonry-section container">
+<section class="gallery-section container">
   <div class="filter-bar" data-filter-bar></div>
-  <div class="masonry-wrap">
-    <div class="masonry" data-grid data-shuffle={shuffle ? '' : undefined}>
+  <div class="gallery-wrap">
+    <div class="photo-grid" data-grid data-shuffle={shuffle ? '' : undefined}>
       {photos.map((photo, index) => <PhotoCard {photo} {index} />)}
     </div>
-  </div>
-  <div class="sentinel" data-sentinel>
-    <span class="rule"></span>
-    <span class="label">LOADING MORE</span>
-    <span class="rule"></span>
   </div>
 </section>
 

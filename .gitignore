@@ -12,3 +12,4 @@ out/
 # astro
 dist/
 .astro/
+.wrangler/

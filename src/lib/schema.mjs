@@ -14,7 +14,10 @@ export function personNode(site) {
     name: 'Arnav Jindal',
     alternateName: SITE_NAME,
     url: new URL('/about/', site).href,
-    image: new URL('/assets/about_photo.jpg', site).href,
+    image: new URL(
+      '/cdn-cgi/image/width=800,format=jpeg,quality=82/assets/about_photo.jpg',
+      site
+    ).href,
     sameAs: [INSTAGRAM_URL],
     description:
       'Amateur photographer — street and landscape work on a Fujifilm X-T5 and 35mm film.',

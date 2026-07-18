@@ -142,94 +142,68 @@ img {
   color: var(--ink);
 }
 
-/* ============ Masonry grid ============ */
-/* Base layout (works everywhere, zero JS, zero CLS): CSS Grid + row spans.
-   Row unit = column width / 48 via container-query units, so the spans
-   computed server-side in masonry.mjs are viewport-independent.
-   NOT CSS `columns` — that breaks left-to-right reading order. */
-.masonry-section {
+/* ============ Justified photo grid ============ */
+/* Direct cards provide the no-JS fallback. The gallery script partitions
+   them into explicit .photo-row bands, balancing the final row with dynamic
+   programming so every desktop band is full-width without cropping. */
+.gallery-section {
   padding-top: 28px;
 }
-.masonry-wrap {
-  container-type: inline-size;
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px 16px;
 }
-.masonry {
-  --cols: 1;
-  --gap: 16px;
-  --colw: calc((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols));
-  display: grid;
-  grid-template-columns: repeat(var(--cols), 1fr);
-  column-gap: var(--gap);
-  row-gap: 0;
-  grid-auto-rows: calc(var(--colw) / 48);
-  grid-auto-flow: row dense;
+.photo-grid::after {
+  content: '';
+  flex: 10 1 0;
+  height: 0;
 }
-/* Breakpoints mirror the mock's `columns: 280px` behavior (must match GRID_SIZES in cdn.mjs) */
-@media (min-width: 656px) {
-  .masonry {
-    --cols: 2;
-  }
+.photo-grid.is-justified {
+  flex-direction: column;
+  gap: 28px;
 }
-@media (min-width: 952px) {
-  .masonry {
-    --cols: 3;
-  }
+.photo-grid.is-justified::after {
+  display: none;
 }
-@media (min-width: 1248px) {
-  .masonry {
-    --cols: 4;
-  }
-}
-@media (min-width: 1544px) {
-  .masonry {
-    --cols: 5;
-  }
-}
-/* Progressive enhancement: native CSS masonry where it exists (Safari 26.4+;
-   flagged elsewhere). Spans and the row-unit hack switch off; natural heights
-   + row-gap take over. Both proposed syntaxes covered. */
-@supports (grid-template-rows: masonry) or (grid-template-rows: grid-lanes) {
-  .masonry {
-    grid-template-rows: masonry;
-    grid-template-rows: grid-lanes;
-    grid-auto-rows: auto;
-    row-gap: 18px;
-  }
-  .ph-card {
-    grid-row: auto !important;
-  }
+.photo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
 }
 
 .ph-card {
-  grid-row-end: span var(--span, 40);
+  flex-grow: var(--ratio, 1);
+  flex-shrink: 1;
+  flex-basis: var(--basis, 260px);
   margin: 0;
   position: relative;
-  min-width: 0;
-}
-/* Landscape photos take two lanes so they read at full weight next to
-   portraits (single lane below 2 columns). */
-@media (min-width: 656px) {
-  .ph-card.wide {
-    grid-column: span 2;
-    grid-row-end: span var(--span2, var(--span));
-  }
+  min-width: 160px;
 }
 .ph-card[hidden] {
   display: none;
+}
+.photo-grid.is-justified .ph-card {
+  flex: var(--ratio, 1) 1 0;
+  min-width: 0;
 }
 .ph-frame {
   position: relative;
   overflow: hidden;
   background: var(--ph);
+  aspect-ratio: var(--ar);
 }
 .ph-frame img {
   width: 100%;
-  height: auto;
-  aspect-ratio: var(--ar);
+  height: 100%;
   object-fit: cover;
 }
 .ph-frame a {
   display: block;
+  width: 100%;
+  height: 100%;
   cursor: zoom-in;
 }
 .ph-card figcaption {
@@ -243,27 +217,28 @@ img {
   letter-spacing: 0.14em;
   color: var(--sub);
   text-transform: uppercase;
+  white-space: nowrap;
+}
+.ph-card figcaption span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ph-card figcaption span:last-child {
+  flex: none;
 }
 
-/* Infinite-scroll sentinel — hidden until JS confirms there are more batches */
-.sentinel {
-  display: none;
-  align-items: center;
-  gap: 18px;
-  padding: 18px 0 40px;
-}
-.sentinel.active {
-  display: flex;
-}
-.sentinel .rule {
-  flex: 1;
-  height: 1px;
-  background: var(--line);
-}
-.sentinel .label {
-  font: 400 9px var(--sans);
-  letter-spacing: 0.24em;
-  color: var(--sub);
+@media (max-width: 655px) {
+  .photo-grid {
+    gap: 24px;
+  }
+  .photo-grid::after {
+    display: none;
+  }
+  .ph-card {
+    flex: 0 0 100%;
+    min-width: 100%;
+  }
 }
 
 /* ============ Lightbox — full screen ============ */

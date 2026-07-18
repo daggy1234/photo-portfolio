@@ -51,13 +51,13 @@ npm run preview    # serve the built dist/ locally
   sitewide are 400/800/1200 (grid) and 2000 (lightbox + covers) to stay inside the free
   transformations tier. Always `format=auto`; never hard-code `format=avif`.
 - **Data loading** is `src/lib/data.mjs` (normalizes the manifest; all EXIF fields optional).
-- **Masonry** is computed at build time (`src/lib/masonry.mjs` + `.masonry` rules in
-  `src/styles/global.css`): CSS Grid row spans over a row unit proportional to the column width,
-  so there is no client-side layout JS and zero CLS. Native CSS masonry kicks in via `@supports`
-  where browsers ship it.
-- **Client JS** is three tiny inline islands (~4 KB total): per-visit Fisher–Yates shuffle +
-  infinite-scroll batching, the lightbox (EXIF panel, ←/→/Esc, `#/photo/<id>` deep links), and a
-  tag filter that stays hidden until photos carry keywords. Everything degrades with JS disabled.
+- **Gallery layout** starts with aspect-ratio-aware flex as a no-JS fallback, then partitions
+  visible cards into balanced, full-width rows at the measured container width. Every row shares
+  one image height, photos keep their full uncropped aspect ratio, and the final cards are balanced
+  with the preceding rows instead of leaving a sparse strip.
+- **Client JS** handles the per-visit Fisher–Yates shuffle and justified-row partitioning, the
+  lightbox (EXIF panel, ←/→/Esc, `#/photo/<id>` deep links), and a tag filter that stays hidden
+  until photos carry keywords. Everything degrades with JS disabled.
 - **Fonts**: Helvetica system stack for UI; Source Serif 4 700 self-hosted in `public/fonts/`.
 - **SEO / embeds**: every photo has a static, crawlable `/photo/<id>/` page; all pages ship
   OpenGraph + Twitter cards (embed images use `format=jpeg` — see `ogImageUrl()`), canonical
@@ -66,11 +66,37 @@ npm run preview    # serve the built dist/ locally
   `sitemap-index.xml`, `image-sitemap.xml` (Google Images), and `llms.txt` (AI crawlers).
   The canonical domain lives in `astro.config.mjs` (`site`), `public/robots.txt`, and the
   two generated endpoints in `src/pages/`.
-- **Deploy**: Cloudflare's Git integration builds on every push using `wrangler.jsonc`, which
-  serves `dist/` as pure static assets (build command `npm run build`, deploy command
-  `npx wrangler deploy`; no `@astrojs/cloudflare` adapter — it forces server output in Astro 6).
-  `npm run deploy` does the same from a local machine, and `.github/workflows/deploy.yml` is a
-  manual-dispatch fallback (secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`).
+- **Delivery**: photos and the local About portrait use responsive Cloudflare Image
+  Transformations. LCP candidates are preloaded, only the first grid image gets high fetch
+  priority, below-fold images lazy-load, and hashed CSS/font assets get long-lived browser caching
+  through `public/_headers`.
+- **Deploy**: Cloudflare's Git integration builds on every push using `wrangler.jsonc`. Astro
+  still prerenders all pages; `src/worker.ts` runs only in front of document requests while
+  CSS, fonts, and images stay on the direct static-asset path. Build with `npm run build` and
+  deploy with `npx wrangler deploy` (there is still no `@astrojs/cloudflare` adapter).
+
+## Analytics
+
+Page views are recorded at the Cloudflare edge in the `photo_portfolio_page_views` Analytics
+Engine dataset. There is no browser beacon for an ad blocker to remove, and no cookie or raw IP
+is stored. Each successful HTML navigation records the path, country, referrer hostname, device
+class, browser family, edge colo, human/bot classification, language, hostname, and edge document
+time. This intentionally reports aggregate requests rather than persistent or personally
+identifiable visitors.
+
+The dataset is created automatically on the first production request after deploy. To print a
+30-day report, create an API token with **Account Analytics: Read**, set these ignored `.env`
+values, and run:
+
+```sh
+CLOUDFLARE_ACCOUNT_ID=...
+CLOUDFLARE_API_TOKEN=...
+npm run analytics
+```
+
+Set `ANALYTICS_DAYS=7` (up to 90) to change the reporting window. The report includes daily
+views, top pages, countries, referrers, device/browser splits, bot traffic, and average edge
+document time.
 
 ## License
 

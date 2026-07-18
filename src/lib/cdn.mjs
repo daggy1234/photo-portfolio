@@ -10,7 +10,7 @@ const CDN_ORIGIN = 'https://photocdn.dag.gy';
 const DEFAULT_QUALITY = 85;
 
 // The only widths used anywhere on the site.
-export const GRID_WIDTHS = [400, 800, 1200]; // masonry grid renders small
+export const GRID_WIDTHS = [400, 800, 1200]; // justified gallery thumbnails
 export const FULL_WIDTH = 2000; // lightbox / full view
 export const COVER_WIDTHS = [800, 1200, FULL_WIDTH]; // album tiles are large; reuse the 2000 bucket
 
@@ -33,22 +33,26 @@ export function ogImageUrl(key) {
   return `${CDN_ORIGIN}/cdn-cgi/image/width=1200,format=jpeg,quality=85/${encodeKey(key)}`;
 }
 
-// Column breakpoints must match the --cols media queries in global.css.
-export const GRID_SIZES = [
-  '(min-width: 1544px) 291px',
-  '(min-width: 1248px) calc((100vw - 128px) / 4)',
-  '(min-width: 952px) calc((100vw - 112px) / 3)',
-  '(min-width: 656px) calc((100vw - 96px) / 2)',
+// Justified rows render landscapes around 500px wide and portraits around
+// 230–300px on large screens. Conservative hints let high-density displays
+// select the 1200px derivative without making portraits over-fetch it.
+export const GRID_SIZES_LANDSCAPE = [
+  '(min-width: 1400px) 500px',
+  '(min-width: 900px) 55vw',
+  '(min-width: 656px) 60vw',
   'calc(100vw - 80px)',
 ].join(', ');
 
-// Landscape cards span 2 columns (see masonry.mjs) — double the slot width.
-export const GRID_SIZES_WIDE = [
-  '(min-width: 1544px) 598px',
-  '(min-width: 1248px) calc((100vw - 128px) / 2 + 16px)',
-  '(min-width: 952px) calc((100vw - 112px) * 2 / 3 + 16px)',
+export const GRID_SIZES_PORTRAIT = [
+  '(min-width: 1400px) 300px',
+  '(min-width: 900px) 34vw',
+  '(min-width: 656px) 40vw',
   'calc(100vw - 80px)',
 ].join(', ');
+
+export function gridSizes(ratio) {
+  return ratio > 1 ? GRID_SIZES_LANDSCAPE : GRID_SIZES_PORTRAIT;
+}
 
 // Album cover tiles: repeat(auto-fit, minmax(340px, 1fr)) with gap 4px.
 export const COVER_SIZES = '(min-width: 764px) 50vw, calc(100vw - 80px)';

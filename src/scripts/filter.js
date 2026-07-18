@@ -15,6 +15,7 @@ if (bar && tags.length) {
       const cardTags = (card.dataset.tags || '').split(',');
       card.hidden = activeTags.size > 0 && ![...activeTags].every((t) => cardTags.includes(t));
     }
+    document.querySelector('[data-grid]')?.dispatchEvent(new CustomEvent('gallery:change'));
   };
 
   for (const tag of tags) {
