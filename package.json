@@ -11,8 +11,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "analytics": "node scripts/analytics-report.mjs",
-    "types:worker": "wrangler types --include-runtime false",
-    "check:worker": "wrangler types --check --include-runtime false && tsc -p tsconfig.worker.json",
+    "types:worker": "wrangler types --env-file /dev/null --include-runtime false",
+    "check:worker": "wrangler types --check --env-file /dev/null --include-runtime false && tsc -p tsconfig.worker.json",
     "test:extract": "node scripts/test-extract.mjs",
     "build:manifest": "node scripts/build-manifest.mjs",
     "deploy": "npm run build && wrangler deploy"

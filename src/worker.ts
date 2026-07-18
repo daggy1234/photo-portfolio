@@ -1,8 +1,6 @@
 // Static document delivery plus privacy-conscious, first-party page analytics.
-// Analytics Engine schema (photo_portfolio_page_views):
-//   blob1 path, blob2 country, blob3 referrer, blob4 device, blob5 browser,
-//   blob6 colo, blob7 audience, blob8 language, blob9 hostname
-//   double1 time spent fetching the static document at the edge (milliseconds)
+// Successful HTML navigations emit one structured `page_view` Worker log. The
+// log contains aggregate request context only: no cookies, raw IP, or raw UA.
 
 function isBot(userAgent: string): boolean {
   return /bot|crawler|spider|slurp|preview|facebookexternalhit|whatsapp|discordbot|telegrambot|headless/i.test(
@@ -98,28 +96,26 @@ export default {
       const country = typeof request.cf?.country === 'string' ? request.cf.country : 'XX';
       const colo = typeof request.cf?.colo === 'string' ? request.cf.colo : 'local';
 
-      // writeDataPoint is intentionally synchronous/non-blocking; the Workers
-      // runtime commits the point after the response without a network fetch.
-      env.PAGE_VIEWS.writeDataPoint({
-        indexes: [url.hostname.slice(0, 96)],
-        blobs: [
-          normalizedPath(url.pathname),
+      console.log(
+        JSON.stringify({
+          event: 'page_view',
+          path: normalizedPath(url.pathname),
           country,
-          referrerGroup(request, url.hostname),
-          deviceClass(userAgent, bot),
-          browserFamily(userAgent, bot),
+          referrer: referrerGroup(request, url.hostname),
+          device: deviceClass(userAgent, bot),
+          browser: browserFamily(userAgent, bot),
           colo,
-          bot ? 'bot' : 'human',
+          audience: bot ? 'bot' : 'human',
           language,
-          url.hostname,
-        ],
-        doubles: [performance.now() - startedAt],
-      });
+          hostname: url.hostname,
+          edge_ms: Math.round((performance.now() - startedAt) * 100) / 100,
+        }),
+      );
     } catch (error) {
       // Analytics must never make the portfolio unavailable.
       console.error(
         JSON.stringify({
-          message: 'page analytics write failed',
+          message: 'page analytics log failed',
           path: new URL(request.url).pathname,
           error: error instanceof Error ? error.message : String(error),
         }),

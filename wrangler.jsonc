@@ -1,5 +1,6 @@
 // Astro still prerenders every route. A tiny Worker runs only in front of
-// document requests to record aggregate, first-party page analytics; hashed
+// document requests to record aggregate, first-party page analytics in Workers
+// Logs; hashed
 // assets, fonts and images continue straight through the static asset path.
 //
 // Cloudflare Git build settings for this repo:
@@ -29,12 +30,6 @@
       "!/*.txt"
     ]
   },
-  "analytics_engine_datasets": [
-    {
-      "binding": "PAGE_VIEWS",
-      "dataset": "photo_portfolio_page_views"
-    }
-  ],
   "observability": {
     "enabled": true,
     "head_sampling_rate": 1

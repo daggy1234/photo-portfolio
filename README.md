@@ -77,16 +77,16 @@ npm run preview    # serve the built dist/ locally
 
 ## Analytics
 
-Page views are recorded at the Cloudflare edge in the `photo_portfolio_page_views` Analytics
-Engine dataset. There is no browser beacon for an ad blocker to remove, and no cookie or raw IP
-is stored. Each successful HTML navigation records the path, country, referrer hostname, device
-class, browser family, edge colo, human/bot classification, language, hostname, and edge document
-time. This intentionally reports aggregate requests rather than persistent or personally
-identifiable visitors.
+Page views are recorded as structured Cloudflare Workers Logs. There is no browser beacon for an
+ad blocker to remove, no Analytics Engine binding to provision, and no cookie or raw IP is stored.
+Each successful HTML navigation records the path, country, referrer hostname, device class,
+browser family, edge colo, human/bot classification, language, hostname, and edge document time.
+This intentionally reports aggregate requests rather than persistent or personally identifiable
+visitors.
 
-The dataset is created automatically on the first production request after deploy. To print a
-30-day report, create an API token with **Account Analytics: Read**, set these ignored `.env`
-values, and run:
+View the events in **Cloudflare Dashboard → Workers & Pages → photo-portfolio → Observability →
+Logs** and search for `page_view`. To print the same aggregate report locally, create an API token
+with **Workers Observability: Read**, set these ignored `.env` values, and run:
 
 ```sh
 CLOUDFLARE_ACCOUNT_ID=...
@@ -94,9 +94,9 @@ CLOUDFLARE_API_TOKEN=...
 npm run analytics
 ```
 
-Set `ANALYTICS_DAYS=7` (up to 90) to change the reporting window. The report includes daily
-views, top pages, countries, referrers, device/browser splits, bot traffic, and average edge
-document time.
+Set `ANALYTICS_DAYS=3` (up to 7, subject to the account's log retention) to change the reporting
+window, or `ANALYTICS_WORKER` if the Worker is renamed. The report includes daily views, top
+pages, countries, referrers, device/browser splits, bot traffic, and average edge document time.
 
 ## License
 
