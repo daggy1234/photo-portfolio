@@ -1,0 +1,87 @@
+{
+  "album": "Ibiza",
+  "updatedAt": "2026-07-18T06:52:25.798Z",
+  "photos": [
+    {
+      "key": "Ibiza/valencia-1.jpg",
+      "album": "Ibiza",
+      "filename": "valencia-1.jpg",
+      "publicUrl": "https://photocdn.dag.gy/Ibiza/valencia-1.jpg",
+      "etag": "\"c5e9f3a9aa14e0a75754836bce34d37f\"",
+      "size": 2587422,
+      "lastModified": "2026-07-18T06:51:24.677Z",
+      "neededRetry": false,
+      "parseFailed": false,
+      "rating": 1,
+      "title": null,
+      "caption": null,
+      "keywords": [
+        "spain"
+      ],
+      "hierarchicalKeywords": [],
+      "width": 2048,
+      "height": 1536,
+      "dateTaken": "2024-09-13T12:45:03.000Z",
+      "camera": "EASTMAN KODAK COMPANY KODAK EASYSHARE M1063 DIGITAL CAMERA",
+      "lens": null,
+      "exposureTime": 0.0015625,
+      "fNumber": 2.8,
+      "iso": 64,
+      "focalLength": 5.7
+    },
+    {
+      "key": "Ibiza/valencia-2.jpg",
+      "album": "Ibiza",
+      "filename": "valencia-2.jpg",
+      "publicUrl": "https://photocdn.dag.gy/Ibiza/valencia-2.jpg",
+      "etag": "\"7ca4e48f9c2a79e96831d9d49a8030df\"",
+      "size": 2383151,
+      "lastModified": "2026-07-18T06:51:23.422Z",
+      "neededRetry": false,
+      "parseFailed": false,
+      "rating": 1,
+      "title": null,
+      "caption": null,
+      "keywords": [
+        "spain"
+      ],
+      "hierarchicalKeywords": [],
+      "width": 2048,
+      "height": 1536,
+      "dateTaken": "2024-09-13T13:49:37.000Z",
+      "camera": "EASTMAN KODAK COMPANY KODAK EASYSHARE M1063 DIGITAL CAMERA",
+      "lens": null,
+      "exposureTime": 0.002,
+      "fNumber": 2.8,
+      "iso": 64,
+      "focalLength": 5.7
+    },
+    {
+      "key": "Ibiza/valencia-3.jpg",
+      "album": "Ibiza",
+      "filename": "valencia-3.jpg",
+      "publicUrl": "https://photocdn.dag.gy/Ibiza/valencia-3.jpg",
+      "etag": "\"bc2b5b7a2f6e1e0083292b9587296d27\"",
+      "size": 2104373,
+      "lastModified": "2026-07-18T06:51:25.363Z",
+      "neededRetry": false,
+      "parseFailed": false,
+      "rating": 5,
+      "title": null,
+      "caption": null,
+      "keywords": [
+        "spain"
+      ],
+      "hierarchicalKeywords": [],
+      "width": 2048,
+      "height": 1536,
+      "dateTaken": "2024-09-13T17:00:39.000Z",
+      "camera": "EASTMAN KODAK COMPANY KODAK EASYSHARE M1063 DIGITAL CAMERA",
+      "lens": null,
+      "exposureTime": 0.016666666666666666,
+      "fNumber": 2.8,
+      "iso": 160,
+      "focalLength": 5.7
+    }
+  ]
+}
